@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <linux/limits.h>
 
 #define BUFFERSIZE 1024
 #define TOKENSIZE 64
@@ -170,9 +171,11 @@ void shLoop()
     char *line;
     char **args;
     int status;
-
+    char cwd[PATH_MAX];
+    
     do {
-        printf("> ");
+        getcwd(cwd, sizeof(cwd));
+        printf("%.*s > ", (int)sizeof(cwd), cwd);
         line = shReadLine();
         args = shSplitLine(line);
         status = shExecute(args);
